@@ -1,0 +1,18 @@
+{% extends "blog/layout.html" %}
+
+{% block content %}
+    <table>
+        <tbody> <!-- tbody: 해당 부분만 스크롤 -->
+            {% for post in post_list %}
+                <tr> <!--tr: 테이블 행 row-->
+                    <td> <!--td: 테이블 열-->
+                        <a href="{% url 'blog:post_detail' post.pk %}">
+                            {{ post.title }}
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
