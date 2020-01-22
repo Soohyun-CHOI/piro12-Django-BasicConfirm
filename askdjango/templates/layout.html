@@ -11,7 +11,7 @@
         <a href="{% url 'accounts:profile' %}">{{ user }}</a>
         <a href="{% url 'accounts:logout' %}?next={{ request.path }}" onclick="return confirm('Are you suer?');">로그아웃</a>
     {% else %}
-        회원가입
+        <a href="{% url 'accounts:signup' %}">회원가입</a>
         <!-- ?next=: 다음 주소로 이동 -->
         <!-- request.path: 현재 경로 -->
         <a href="{% url "accounts:login" %}?next={{ request.path }}">로그인</a>
