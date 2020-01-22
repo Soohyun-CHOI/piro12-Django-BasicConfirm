@@ -1,26 +1,25 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
+from django.contrib.auth import login as auth_login
+from django.shortcuts import render, redirect, resolve_url
 from django.views.generic import CreateView
 
+from accounts.forms import SignupForm
 from askdjango import settings
-
-
-@login_required
-def profile(request):
-    return render(request, "accounts/profile.html")
 
 
 """
 def signup(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = SignupForm(request.POST)
         if form.is_valid():
             user = form.save()
-            return redirect(settings.LOGIN_URL)
+            # 로그인 처리
+            auth_login(request, user)
+            return redirect("accounts:profile")
     else:
-        form = UserCreationForm()
+        form = SignupForm()
 
     ctx = {
         "form": form
@@ -28,7 +27,25 @@ def signup(request):
     return render(request, "accounts/signup.html", ctx)
 """
 
-signup = CreateView.as_view(model=User,
-                            form_class=UserCreationForm,
-                            success_url=settings.LOGIN_URL,  # 다음 위치
-                            template_name="accounts/signup.html")
+
+class SignupView(CreateView):
+    model = User
+    form_class = SignupForm
+    template_name = "accounts/signup.html"
+
+    def get_success_url(self):
+        return resolve_url("accounts:profile")
+
+    def form_valid(self, form):
+        user = form.save()
+        auth_login(self.request, user)
+        return redirect("accounts:profile")
+
+
+
+signup = SignupView.as_view()
+
+
+@login_required
+def profile(request):
+    return render(request, "accounts/profile.html")
